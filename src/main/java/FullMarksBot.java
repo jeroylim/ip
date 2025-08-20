@@ -29,18 +29,16 @@ public class FullMarksBot {
         public void markUndone() {
             this.isDone = false;
         }
-
     }
 
     public static class Todo extends Task {
-
         public Todo(String description) {
             super(description);
         }
 
         @Override
         public String getStatusIcon() {
-            return "[T] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+            return "[T] " + (isDone ? "[X] " : "[ ] ");
         }
     }
 
@@ -54,7 +52,7 @@ public class FullMarksBot {
 
         @Override
         public String getStatusIcon() {
-            return "[D] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+            return "[D] " + (isDone ? "[X] " : "[ ] ");
         }
 
         @Override
@@ -75,7 +73,7 @@ public class FullMarksBot {
 
         @Override
         public String getStatusIcon() {
-            return "[E] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+            return "[E] " + (isDone ? "[X] " : "[ ] ");
         }
 
         @Override
@@ -84,9 +82,81 @@ public class FullMarksBot {
         }
     }
 
+    public static class FullMarksException extends Exception {
+        public FullMarksException(String message) {
+            super(message);
+        }
+    }
+
     public static boolean containsExactWord(String input, String word) {
         String pattern = "(?i)\\b" + Pattern.quote(word) + "\\b";
         return Pattern.compile(pattern).matcher(input).find();
+    }
+
+    private static void markTask(String input, ArrayList<Task> tasks) throws FullMarksException {
+        String[] parts = input.split(" ");
+        if (parts.length < 2) {
+            throw new FullMarksException("Please specify a task number after 'mark'.");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new FullMarksException("Invalid task number. Please enter a number.");
+        }
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new FullMarksException("Task number " + taskNumber + " does not exist.");
+        }
+        tasks.get(taskNumber - 1).markDone();
+        System.out.println("Congrats! You completed this task!");
+    }
+
+    private static void unmarkTask(String input, ArrayList<Task> tasks) throws FullMarksException {
+        String[] parts = input.split(" ");
+        if (parts.length < 2) {
+            throw new FullMarksException("Please specify a task number after 'unmark'.");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new FullMarksException("Invalid task number. Please enter a number.");
+        }
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new FullMarksException("Task number " + taskNumber + " does not exist.");
+        }
+        tasks.get(taskNumber - 1).markUndone();
+        System.out.println("Oh no! Let me unmark this...");
+    }
+
+    private static void addTask(String input, ArrayList<Task> tasks, Scanner scanner) throws FullMarksException {
+        System.out.println("Is this a Todo, Deadline or Event Task?");
+        String type = scanner.nextLine();
+
+        if (containsExactWord(type, "todo")) {
+            tasks.add(new Todo(input));
+            System.out.println("New Todo: " + input);
+        } else if (containsExactWord(type, "deadline")) {
+            System.out.println("When should it be done by?");
+            String endDate = scanner.nextLine();
+            if (endDate.trim().isEmpty()) {
+                throw new FullMarksException("Deadline date cannot be empty.");
+            }
+            tasks.add(new Deadline(input, endDate));
+            System.out.println("New Deadline: " + input);
+        } else if (containsExactWord(type, "event")) {
+            System.out.println("When does this event start?");
+            String startDate = scanner.nextLine();
+            System.out.println("Now when does it end?");
+            String endDate = scanner.nextLine();
+            if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
+                throw new FullMarksException("Event dates cannot be empty.");
+            }
+            tasks.add(new Event(input, startDate, endDate));
+            System.out.println("New Event: " + input);
+        } else {
+            throw new FullMarksException("Invalid task type. Please type 'todo', 'deadline' or 'event'.");
+        }
     }
 
     public static void main(String[] args) {
@@ -96,47 +166,28 @@ public class FullMarksBot {
 
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> tasks = new ArrayList<>();
+
         while (true) {
             String input = scanner.nextLine();
-
-            if (containsExactWord(input, "list")) {
-                for (int i = 0; i < tasks.size(); i++) {
-                    System.out.println((i + 1) + ": " + tasks.get(i).getStatusIcon() + tasks.get(i).getDescription());
-                }
-            } else if (containsExactWord(input, "mark")) {
-                String[] parts = input.split(" ");
-                int taskNumber = Integer.parseInt(parts[1]); // parts[1] is "2" from "mark 2"
-                Task selectedTask = tasks.get(taskNumber - 1);
-                selectedTask.markDone();
-                System.out.println("Congrats! You completed this task!");
-            } else if (containsExactWord(input, "unmark")) {
-                String[] parts = input.split(" ");
-                int taskNumber = Integer.parseInt(parts[1]); // parts[1] is "2" from "mark 2"
-                Task selectedTask = tasks.get(taskNumber - 1);
-                selectedTask.markUndone();
-                System.out.println("Oh no! Let me unmark this...");
-            } else if (containsExactWord(input, "bye")) {
-                System.out.println("bye bye for now!");
-                break;
-            } else {
-                System.out.println("Is this a Todo, Deadline or Event Task?");
-                String type = scanner.nextLine();
-                if (containsExactWord(type, "todo")) {
-                    tasks.add(new Todo(input));
-                    System.out.println("New Todo: " + input);
-                } else if (containsExactWord(type, "deadline")) {
-                    System.out.println("When should it be done by?");
-                    String endDate = scanner.nextLine();
-                    tasks.add(new Deadline(input, endDate));
-                    System.out.println("New Deadline: " + input);
+            try {
+                if (containsExactWord(input, "list")) {
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + ": " + tasks.get(i).getStatusIcon() + tasks.get(i).getDescription());
+                    }
+                } else if (containsExactWord(input, "mark")) {
+                    markTask(input, tasks);
+                } else if (containsExactWord(input, "unmark")) {
+                    unmarkTask(input, tasks);
+                } else if (containsExactWord(input, "bye")) {
+                    System.out.println("bye bye for now!");
+                    break;
                 } else {
-                    System.out.println("When does this event start?");
-                    String startDate = scanner.nextLine();
-                    System.out.println("Now when does it end?");
-                    String endDate = scanner.nextLine();
-                    tasks.add(new Event(input, startDate, endDate));
-                    System.out.println("New Event: " + input);
+                    addTask(input, tasks, scanner);
                 }
+            } catch (FullMarksException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Generic error: " + e.getMessage());
             }
         }
     }
