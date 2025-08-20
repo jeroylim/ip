@@ -90,9 +90,9 @@ public class FullMarksBot {
     }
 
     public static void main(String[] args) {
-        System.out.printf("Hello, I'm %s," +
+        System.out.printf("Hello, I'm %s, " +
                 "the bot that gives you full marks, " +
-                "please write down what you want me to store!", NAME);
+                "please write down what you want me to store!%n", NAME);
 
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> tasks = new ArrayList<>();
