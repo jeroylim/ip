@@ -129,6 +129,24 @@ public class FullMarksBot {
         System.out.println("Oh no! Let me unmark this...");
     }
 
+    private static void deleteTask(String input, ArrayList<Task> tasks) throws FullMarksException {
+        String[] parts = input.split(" ");
+        if (parts.length < 2) {
+            throw new FullMarksException("Please specify a task number after 'delete'.");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new FullMarksException("Invalid task number. Please enter a number.");
+        }
+        if (taskNumber < 1 || taskNumber > tasks.size()) {
+            throw new FullMarksException("Task number " + taskNumber + " does not exist.");
+        }
+        tasks.remove(taskNumber - 1);
+        System.out.println("Let's get this task out of here.");
+    }
+
     private static void addTask(String input, ArrayList<Task> tasks, Scanner scanner) throws FullMarksException {
         System.out.println("Is this a Todo, Deadline or Event Task?");
         String type = scanner.nextLine();
@@ -178,6 +196,8 @@ public class FullMarksBot {
                     markTask(input, tasks);
                 } else if (containsExactWord(input, "unmark")) {
                     unmarkTask(input, tasks);
+                } else if (containsExactWord(input, "delete")) {
+                    deleteTask(input, tasks);
                 } else if (containsExactWord(input, "bye")) {
                     System.out.println("bye bye for now!");
                     break;

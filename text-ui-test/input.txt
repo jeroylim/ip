@@ -10,4 +10,9 @@ friday
 list
 mark 2
 list
+unmark 2
+delete 1
+list
+mark abc
+delete 10
 bye

@@ -15,4 +15,10 @@ Congrats! You completed this task!
 1: [T] [ ] buy milk
 2: [D] [X] submit assignment (by: tomorrow)
 3: [E] [ ] team meeting (from: monday to: friday)
+Oh no! Let me unmark this...
+Let's get this task out of here.
+1: [D] [ ] submit assignment (by: tomorrow)
+2: [E] [ ] team meeting (from: monday to: friday)
+Invalid task number. Please enter a number.
+Task number 10 does not exist.
 bye bye for now!
