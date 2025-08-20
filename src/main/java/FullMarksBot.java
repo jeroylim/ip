@@ -1,12 +1,11 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class FullMarksBot {
     public static String NAME = "FullMarksBot";
 
-    public static class Task {
+    public abstract static class Task {
         protected String description;
         protected boolean isDone;
 
@@ -33,6 +32,58 @@ public class FullMarksBot {
 
     }
 
+    public static class Todo extends Task {
+
+        public Todo(String description) {
+            super(description);
+        }
+
+        @Override
+        public String getStatusIcon() {
+            return "[T] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+        }
+    }
+
+    public static class Deadline extends Task {
+        String endDate;
+
+        public Deadline(String description, String endDate) {
+            super(description);
+            this.endDate = endDate;
+        }
+
+        @Override
+        public String getStatusIcon() {
+            return "[D] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+        }
+
+        @Override
+        public String getDescription() {
+            return this.description + " (by: " + this.endDate + ")";
+        }
+    }
+
+    public static class Event extends Task {
+        String startDate;
+        String endDate;
+
+        public Event(String description, String startDate, String endDate) {
+            super(description);
+            this.startDate = startDate;
+            this.endDate = endDate;
+        }
+
+        @Override
+        public String getStatusIcon() {
+            return "[E] " + (isDone ? "[X] " : "[ ] "); // mark done task with X
+        }
+
+        @Override
+        public String getDescription() {
+            return this.description + " (from: " + this.startDate + " to: " + this.endDate + ")";
+        }
+    }
+
     public static boolean containsExactWord(String input, String word) {
         String pattern = "(?i)\\b" + Pattern.quote(word) + "\\b";
         return Pattern.compile(pattern).matcher(input).find();
@@ -44,10 +95,9 @@ public class FullMarksBot {
                 "please write down what you want me to store!", NAME);
 
         Scanner scanner = new Scanner(System.in);
-        String input;
         ArrayList<Task> tasks = new ArrayList<>();
         while (true) {
-            input = scanner.nextLine();
+            String input = scanner.nextLine();
 
             if (containsExactWord(input, "list")) {
                 for (int i = 0; i < tasks.size(); i++) {
@@ -69,10 +119,25 @@ public class FullMarksBot {
                 System.out.println("bye bye for now!");
                 break;
             } else {
-                tasks.add(new Task(input));
-                System.out.println("New Task: " + input);
+                System.out.println("Is this a Todo, Deadline or Event Task?");
+                String type = scanner.nextLine();
+                if (containsExactWord(type, "todo")) {
+                    tasks.add(new Todo(input));
+                    System.out.println("New Todo: " + input);
+                } else if (containsExactWord(type, "deadline")) {
+                    System.out.println("When should it be done by?");
+                    String endDate = scanner.nextLine();
+                    tasks.add(new Deadline(input, endDate));
+                    System.out.println("New Deadline: " + input);
+                } else {
+                    System.out.println("When does this event start?");
+                    String startDate = scanner.nextLine();
+                    System.out.println("Now when does it end?");
+                    String endDate = scanner.nextLine();
+                    tasks.add(new Event(input, startDate, endDate));
+                    System.out.println("New Event: " + input);
+                }
             }
-
         }
     }
 }
