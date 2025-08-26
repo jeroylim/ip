@@ -1,9 +1,11 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class FullMarksBot {
     public static String NAME = "FullMarksBot";
+    private static final String FILE_PATH = "./data/tasks.txt";
 
     public abstract static class Task {
         protected String description;
@@ -29,6 +31,9 @@ public class FullMarksBot {
         public void markUndone() {
             this.isDone = false;
         }
+
+        public abstract String writtenTasks();
+
     }
 
     public static class Todo extends Task {
@@ -40,6 +45,12 @@ public class FullMarksBot {
         public String getStatusIcon() {
             return "[T] " + (isDone ? "[X] " : "[ ] ");
         }
+
+        @Override
+        public String writtenTasks() {
+            return "T | " + (isDone ? "1" : "0") + " | " + description;
+        }
+
     }
 
     public static class Deadline extends Task {
@@ -59,6 +70,12 @@ public class FullMarksBot {
         public String getDescription() {
             return this.description + " (by: " + this.endDate + ")";
         }
+
+        @Override
+        public String writtenTasks() {
+            return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + endDate;
+        }
+
     }
 
     public static class Event extends Task {
@@ -80,6 +97,12 @@ public class FullMarksBot {
         public String getDescription() {
             return this.description + " (from: " + this.startDate + " to: " + this.endDate + ")";
         }
+
+        @Override
+        public String writtenTasks() {
+            return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + startDate + " | " + endDate;
+        }
+
     }
 
     public static class FullMarksException extends Exception {
@@ -109,6 +132,7 @@ public class FullMarksBot {
         }
         tasks.get(taskNumber - 1).markDone();
         System.out.println("Congrats! You completed this task!");
+        saveTasks(tasks);
     }
 
     private static void unmarkTask(String input, ArrayList<Task> tasks) throws FullMarksException {
@@ -127,6 +151,7 @@ public class FullMarksBot {
         }
         tasks.get(taskNumber - 1).markUndone();
         System.out.println("Oh no! Let me unmark this...");
+        saveTasks(tasks);
     }
 
     private static void deleteTask(String input, ArrayList<Task> tasks) throws FullMarksException {
@@ -145,6 +170,7 @@ public class FullMarksBot {
         }
         tasks.remove(taskNumber - 1);
         System.out.println("Let's get this task out of here.");
+        saveTasks(tasks);
     }
 
     private static void addTask(String input, ArrayList<Task> tasks, Scanner scanner) throws FullMarksException {
@@ -175,7 +201,55 @@ public class FullMarksBot {
         } else {
             throw new FullMarksException("Invalid task type. Please type 'todo', 'deadline' or 'event'.");
         }
+        saveTasks(tasks);
     }
+
+    private static void saveTasks(ArrayList<Task> tasks) {
+        File file = new File(FILE_PATH);
+        file.getParentFile().mkdirs();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            for (Task task : tasks) {
+                writer.write(task.writtenTasks());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving tasks: " + e.getMessage());
+        }
+    }
+
+    private static ArrayList<Task> loadTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
+        File file = new File(FILE_PATH);
+        if (!file.exists()) return tasks;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" \\| ");
+                String type = parts[0];
+                boolean done = parts[1].equals("1");
+                Task task = null;
+                switch (type) {
+                    case "T":
+                        task = new Todo(parts[2]);
+                        break;
+                    case "D":
+                        task = new Deadline(parts[2], parts[3]);
+                        break;
+                    case "E":
+                        task = new Event(parts[2], parts[3], parts[4]);
+                        break;
+                }
+                if (task != null && done) task.markDone();
+                if (task != null) tasks.add(task);
+            }
+        } catch (IOException e) {
+            System.out.println("Error loading tasks: " + e.getMessage());
+        }
+        return tasks;
+    }
+
+
 
     public static void main(String[] args) {
         System.out.printf("Hello, I'm %s, " +
@@ -183,7 +257,7 @@ public class FullMarksBot {
                 "please write down what you want me to store!%n", NAME);
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = loadTasks();
 
         while (true) {
             String input = scanner.nextLine();
