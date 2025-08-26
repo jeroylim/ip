@@ -1,7 +1,11 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class FullMarksBot {
     public static String NAME = "FullMarksBot";
@@ -54,11 +58,17 @@ public class FullMarksBot {
     }
 
     public static class Deadline extends Task {
-        String endDate;
+        private LocalDateTime endDate;
 
         public Deadline(String description, String endDate) {
             super(description);
-            this.endDate = endDate;
+            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter inputFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            try {
+                this.endDate = LocalDateTime.parse(endDate, inputFormat1);
+            } catch (Exception e) {
+                this.endDate = LocalDateTime.parse(endDate, inputFormat2);
+            }
         }
 
         @Override
@@ -68,7 +78,8 @@ public class FullMarksBot {
 
         @Override
         public String getDescription() {
-            return this.description + " (by: " + this.endDate + ")";
+            DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
+            return this.description + " (by: " + this.endDate.format(outputFormat) + ")";
         }
 
         @Override
@@ -79,13 +90,23 @@ public class FullMarksBot {
     }
 
     public static class Event extends Task {
-        String startDate;
-        String endDate;
+        LocalDateTime startDate;
+        LocalDateTime endDate;
 
         public Event(String description, String startDate, String endDate) {
             super(description);
-            this.startDate = startDate;
-            this.endDate = endDate;
+            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            DateTimeFormatter inputFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            try {
+                this.startDate = LocalDateTime.parse(startDate, inputFormat1);
+            } catch (Exception e) {
+                this.startDate = LocalDateTime.parse(startDate, inputFormat2);
+            }
+            try {
+                this.endDate = LocalDateTime.parse(endDate, inputFormat1);
+            } catch (Exception e) {
+                this.endDate = LocalDateTime.parse(endDate, inputFormat2);
+            }
         }
 
         @Override
@@ -95,7 +116,8 @@ public class FullMarksBot {
 
         @Override
         public String getDescription() {
-            return this.description + " (from: " + this.startDate + " to: " + this.endDate + ")";
+            DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
+            return this.description + " (from: " + this.startDate.format(outputFormat) + " to: " + this.endDate.format(outputFormat) + ")";
         }
 
         @Override
@@ -181,7 +203,7 @@ public class FullMarksBot {
             tasks.add(new Todo(input));
             System.out.println("New Todo: " + input);
         } else if (containsExactWord(type, "deadline")) {
-            System.out.println("When should it be done by?");
+            System.out.println("When should it be done by? Please format it like yyyy-MM-dd HH:mm");
             String endDate = scanner.nextLine();
             if (endDate.trim().isEmpty()) {
                 throw new FullMarksException("Deadline date cannot be empty.");
@@ -189,9 +211,9 @@ public class FullMarksBot {
             tasks.add(new Deadline(input, endDate));
             System.out.println("New Deadline: " + input);
         } else if (containsExactWord(type, "event")) {
-            System.out.println("When does this event start?");
+            System.out.println("When does this event start? Please format it like yyyy-MM-dd HH:mm");
             String startDate = scanner.nextLine();
-            System.out.println("Now when does it end?");
+            System.out.println("Now when does it end? Please format it like yyyy-MM-dd HH:mm");
             String endDate = scanner.nextLine();
             if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
                 throw new FullMarksException("Event dates cannot be empty.");
