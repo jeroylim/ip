@@ -1,3 +1,5 @@
+package fullMarksBot;
+
 public class Parser {
     public static String getCommandWord(String input) {
         String[] parts = input.trim().split(" ");

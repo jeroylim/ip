@@ -1,3 +1,5 @@
+package fullMarksBot;
+
 import java.io.*;
 
 public class Storage {

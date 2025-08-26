@@ -1,11 +1,8 @@
-import java.io.*;
+package fullMarksBot;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Pattern;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 
 
 public class FullMarksBot {
