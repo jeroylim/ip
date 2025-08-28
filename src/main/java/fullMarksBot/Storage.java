@@ -2,13 +2,26 @@ package fullMarksBot;
 
 import java.io.*;
 
+/**
+ * Handles saving and loading tasks to and from persistent storage.
+ */
 public class Storage {
     private final String filePath;
 
+    /**
+     * Constructs a Storage object with the specified file path.
+     *
+     * @param filePath Path to the file for storing tasks.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves the given TaskList to the file.
+     *
+     * @param taskList List of tasks to save.
+     */
     public void saveTasks(TaskList taskList) {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
@@ -22,6 +35,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the file and returns them as a TaskList.
+     *
+     * @return TaskList containing loaded tasks.
+     */
     public TaskList loadTasks() {
         TaskList taskList = new TaskList();
         File file = new File(filePath);

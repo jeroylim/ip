@@ -4,15 +4,25 @@ import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 import java.time.format.DateTimeFormatter;
 
-
+/**
+ * Main class for FullMarksBot, a bot for managing tasks.
+ */
 public class FullMarksBot {
     public static String NAME = "FullMarksBot";
     private static final String FILE_PATH = "./data/tasks.txt";
 
+    /**
+     * Represents a generic task.
+     */
     public abstract static class Task {
         protected String description;
         protected boolean isDone;
 
+        /**
+         * Constructs a Task with the given description.
+         *
+         * @param description Description of the task.
+         */
         public Task(String description) {
             this.description = description;
             this.isDone = false;
@@ -34,11 +44,24 @@ public class FullMarksBot {
             this.isDone = false;
         }
 
+        /**
+         * Returns the string representation of the task for storage.
+         *
+         * @return Written format of the task.
+         */
         public abstract String writtenTasks();
 
     }
 
+    /**
+     * Represents a Todo task.
+     */
     public static class Todo extends Task {
+        /**
+         * Constructs a Todo task with the given description.
+         *
+         * @param description Description of the todo.
+         */
         public Todo(String description) {
             super(description);
         }
@@ -55,9 +78,18 @@ public class FullMarksBot {
 
     }
 
+    /**
+     * Represents a Deadline task.
+     */
     public static class Deadline extends Task {
         private LocalDateTime endDate;
 
+        /**
+         * Constructs a Deadline task with the given description and end date.
+         *
+         * @param description Description of the deadline.
+         * @param endDate End date in string format.
+         */
         public Deadline(String description, String endDate) {
             super(description);
             DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -87,10 +119,20 @@ public class FullMarksBot {
 
     }
 
+    /**
+     * Represents an Event task.
+     */
     public static class Event extends Task {
         LocalDateTime startDate;
         LocalDateTime endDate;
 
+        /**
+         * Constructs an Event task with the given description, start date, and end date.
+         *
+         * @param description Description of the event.
+         * @param startDate Start date in string format.
+         * @param endDate End date in string format.
+         */
         public Event(String description, String startDate, String endDate) {
             super(description);
             DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -125,18 +167,37 @@ public class FullMarksBot {
 
     }
 
+    /**
+     * Exception thrown for errors specific to FullMarksBot.
+     */
     public static class FullMarksException extends Exception {
+        /**
+         * Constructs a FullMarksException with the given message.
+         *
+         * @param message Error message.
+         */
         public FullMarksException(String message) {
             super(message);
         }
     }
 
+    /**
+     * Returns true if the input contains the exact word, case-insensitive.
+     *
+     * @param input Input string to search.
+     * @param word Word to search for.
+     * @return True if the word is found as a whole word, false otherwise.
+     */
     public static boolean containsExactWord(String input, String word) {
         String pattern = "(?i)\\b" + Pattern.quote(word) + "\\b";
         return Pattern.compile(pattern).matcher(input).find();
     }
 
-
+    /**
+     * Runs the main loop of FullMarksBot.
+     *
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         Ui ui = new Ui();
         Storage storage = new Storage(FILE_PATH);
