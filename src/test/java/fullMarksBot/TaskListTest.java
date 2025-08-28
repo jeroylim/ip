@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * Tests for the TaskList class.
+ */
 class TaskListTest {
 
     private TaskList taskList;
@@ -15,6 +18,9 @@ class TaskListTest {
         taskList = new TaskList();
     }
 
+    /**
+     * Tests adding a task to the TaskList.
+     */
     @Test
     void testAddTask() {
         FullMarksBot.Task task = new FullMarksBot.Todo("Eat");
@@ -24,6 +30,9 @@ class TaskListTest {
         assertEquals(task, taskList.getTask(0));
     }
 
+    /**
+     * Tests deleting tasks from the TaskList and handling invalid indices.
+     */
     @Test
     void testDeleteTask() {
         FullMarksBot.Task task1 = new FullMarksBot.Todo("Write a lot");
