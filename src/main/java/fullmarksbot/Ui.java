@@ -66,4 +66,17 @@ public class Ui {
         System.out.println(prompt);
         return scanner.nextLine();
     }
+
+    /**
+     * Displays the list of tasks that match the search keyword.
+     *
+     * @param foundTasks List of matching tasks.
+     */
+    public void showFoundTasks(java.util.List<FullMarksBot.Task> foundTasks) {
+        System.out.println("Here are the related tasks:");
+        for (int i = 0; i < foundTasks.size(); i++) {
+            FullMarksBot.Task t = foundTasks.get(i);
+            System.out.println("     " + (i + 1) + "." + t.getStatusIcon() + t.getDescription());
+        }
+    }
 }

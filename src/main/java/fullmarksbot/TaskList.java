@@ -58,6 +58,23 @@ public class TaskList {
         tasks.get(index).markUndone();
     }
 
+    /**
+     * Returns a list of tasks whose description contains the given keyword (case-insensitive).
+     *
+     * @param keyword Keyword to search for in task descriptions.
+     * @return ArrayList of matching tasks.
+     */
+    public ArrayList<FullMarksBot.Task> findTasks(String keyword) {
+        ArrayList<FullMarksBot.Task> matches = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+        for (FullMarksBot.Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
+
     public ArrayList<FullMarksBot.Task> getTasks() {
         return tasks;
     }

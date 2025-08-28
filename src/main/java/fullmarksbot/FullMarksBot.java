@@ -220,6 +220,10 @@ public class FullMarksBot {
                     ui.showMessage("Let's get this task out of here.");
                     storage.saveTasks(tasks);
                     break;
+                case "find":
+                    String keyword = Parser.getFindKeyword(input);
+                    ui.showFoundTasks(tasks.findTasks(keyword));
+                    break;
                 case "bye":
                     ui.showMessage("bye bye for now!");
                     return;

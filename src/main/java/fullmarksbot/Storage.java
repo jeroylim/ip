@@ -1,6 +1,5 @@
 package fullmarksbot;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -61,18 +60,22 @@ public class Storage {
                 boolean done = parts[1].equals("1");
                 FullMarksBot.Task task = null;
                 switch (type) {
-                    case "T":
-                        task = new FullMarksBot.Todo(parts[2]);
-                        break;
-                    case "D":
-                        task = new FullMarksBot.Deadline(parts[2], parts[3]);
-                        break;
-                    case "E":
-                        task = new FullMarksBot.Event(parts[2], parts[3], parts[4]);
-                        break;
+                case "T":
+                    task = new FullMarksBot.Todo(parts[2]);
+                    break;
+                case "D":
+                    task = new FullMarksBot.Deadline(parts[2], parts[3]);
+                    break;
+                case "E":
+                    task = new FullMarksBot.Event(parts[2], parts[3], parts[4]);
+                    break;
                 }
-                if (task != null && done) task.markDone();
-                if (task != null) taskList.addTask(task);
+                if (task != null && done) {
+                    task.markDone();
+                }
+                if (task != null) {
+                    taskList.addTask(task);
+                }
             }
         } catch (IOException e) {
             System.out.println("Error loading tasks: " + e.getMessage());

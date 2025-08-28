@@ -33,4 +33,19 @@ public class Parser {
             throw new FullMarksBot.FullMarksException("Invalid task number. Please enter a number.");
         }
     }
+
+    /**
+     * Returns the keyword for the find command from the user's input.
+     *
+     * @param input User input string containing the find command.
+     * @return Keyword to search for.
+     * @throws FullMarksBot.FullMarksException If the keyword is missing.
+     */
+    public static String getFindKeyword(String input) throws FullMarksBot.FullMarksException {
+        String[] parts = input.trim().split(" ", 2);
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new FullMarksBot.FullMarksException("Please specify a keyword to find.");
+        }
+        return parts[1].trim();
+    }
 }
