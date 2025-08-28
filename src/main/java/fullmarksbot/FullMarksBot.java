@@ -1,4 +1,4 @@
-package fullMarksBot;
+package fullmarksbot;
 
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
@@ -92,13 +92,9 @@ public class FullMarksBot {
          */
         public Deadline(String description, String endDate) {
             super(description);
-            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            DateTimeFormatter inputFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            try {
-                this.endDate = LocalDateTime.parse(endDate, inputFormat1);
-            } catch (Exception e) {
-                this.endDate = LocalDateTime.parse(endDate, inputFormat2);
-            }
+            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            this.endDate = LocalDateTime.parse(endDate, inputFormat1);
+
         }
 
         @Override
@@ -135,18 +131,9 @@ public class FullMarksBot {
          */
         public Event(String description, String startDate, String endDate) {
             super(description);
-            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            DateTimeFormatter inputFormat2 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            try {
-                this.startDate = LocalDateTime.parse(startDate, inputFormat1);
-            } catch (Exception e) {
-                this.startDate = LocalDateTime.parse(startDate, inputFormat2);
-            }
-            try {
-                this.endDate = LocalDateTime.parse(endDate, inputFormat1);
-            } catch (Exception e) {
-                this.endDate = LocalDateTime.parse(endDate, inputFormat2);
-            }
+            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            this.startDate = LocalDateTime.parse(startDate, inputFormat1);
+            this.endDate = LocalDateTime.parse(endDate, inputFormat1);
         }
 
         @Override
@@ -157,12 +144,14 @@ public class FullMarksBot {
         @Override
         public String getDescription() {
             DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("MMM dd yyyy, hh:mm a");
-            return this.description + " (from: " + this.startDate.format(outputFormat) + " to: " + this.endDate.format(outputFormat) + ")";
+            return this.description + " (from: " + this.startDate.format(outputFormat)
+                    + " to: " + this.endDate.format(outputFormat) + ")";
         }
 
         @Override
         public String writtenTasks() {
-            return "E | " + (isDone ? "1" : "0") + " | " + description + " | " + startDate + " | " + endDate;
+            return "E | " + (isDone ? "1" : "0") + " | "
+                    + description + " | " + startDate + " | " + endDate;
         }
 
     }
@@ -210,55 +199,59 @@ public class FullMarksBot {
             try {
                 String command = Parser.getCommandWord(input);
                 switch (command) {
-                    case "list":
-                        ui.showTaskList(tasks);
-                        break;
-                    case "mark":
-                        int markIdx = Parser.getTaskNumber(input);
-                        tasks.markTask(markIdx);
-                        ui.showMessage("Congrats! You completed this task!");
-                        storage.saveTasks(tasks);
-                        break;
-                    case "unmark":
-                        int unmarkIdx = Parser.getTaskNumber(input);
-                        tasks.unmarkTask(unmarkIdx);
-                        ui.showMessage("Oh no! Let me unmark this...");
-                        storage.saveTasks(tasks);
-                        break;
-                    case "delete":
-                        int delIdx = Parser.getTaskNumber(input);
-                        tasks.deleteTask(delIdx);
-                        ui.showMessage("Let's get this task out of here.");
-                        storage.saveTasks(tasks);
-                        break;
-                    case "bye":
-                        ui.showMessage("bye bye for now!");
-                        return;
-                    default:
-                        String type = ui.ask("Is this a Todo, Deadline or Event Task?");
-                        if (containsExactWord(type, "todo")) {
-                            tasks.addTask(new Todo(input));
-                            ui.showMessage("New Todo: " + input);
-                        } else if (containsExactWord(type, "deadline")) {
-                            String endDate = ui.ask("When should it be done by? Please format it like yyyy-MM-dd HH:mm");
-                            if (endDate.trim().isEmpty()) {
-                                throw new FullMarksException("Deadline date cannot be empty.");
-                            }
-                            tasks.addTask(new Deadline(input, endDate));
-                            ui.showMessage("New Deadline: " + input);
-                        } else if (containsExactWord(type, "event")) {
-                            String startDate = ui.ask("When does this event start? Please format it like yyyy-MM-dd HH:mm");
-                            String endDate = ui.ask("Now when does it end? Please format it like yyyy-MM-dd HH:mm");
-                            if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                                throw new FullMarksException("Event dates cannot be empty.");
-                            }
-                            tasks.addTask(new Event(input, startDate, endDate));
-                            ui.showMessage("New Event: " + input);
-                        } else {
-                            throw new FullMarksException("Invalid task type. Please type 'todo', 'deadline' or 'event'.");
+                case "list":
+                    ui.showTaskList(tasks);
+                    break;
+                case "mark":
+                    int markIdx = Parser.getTaskNumber(input);
+                    tasks.markTask(markIdx);
+                    ui.showMessage("Congrats! You completed this task!");
+                    storage.saveTasks(tasks);
+                    break;
+                case "unmark":
+                    int unmarkIdx = Parser.getTaskNumber(input);
+                    tasks.unmarkTask(unmarkIdx);
+                    ui.showMessage("Oh no! Let me unmark this...");
+                    storage.saveTasks(tasks);
+                    break;
+                case "delete":
+                    int delIdx = Parser.getTaskNumber(input);
+                    tasks.deleteTask(delIdx);
+                    ui.showMessage("Let's get this task out of here.");
+                    storage.saveTasks(tasks);
+                    break;
+                case "bye":
+                    ui.showMessage("bye bye for now!");
+                    return;
+                default:
+                    String type = ui.ask("Is this a Todo, Deadline or Event Task?");
+                    if (containsExactWord(type, "todo")) {
+                        tasks.addTask(new Todo(input));
+                        ui.showMessage("New Todo: " + input);
+                    } else if (containsExactWord(type, "deadline")) {
+                        String endDate = ui.ask("When should it be done by?"
+                                + " Please format it like yyyy-MM-dd HH:mm");
+                        if (endDate.trim().isEmpty()) {
+                            throw new FullMarksException("Deadline date cannot be empty.");
                         }
-                        storage.saveTasks(tasks);
-                        break;
+                        tasks.addTask(new Deadline(input, endDate));
+                        ui.showMessage("New Deadline: " + input);
+                    } else if (containsExactWord(type, "event")) {
+                        String startDate = ui.ask("When does this event start?"
+                                + " Please format it like yyyy-MM-dd HH:mm");
+                        String endDate = ui.ask("Now when does it end?"
+                                + " Please format it like yyyy-MM-dd HH:mm");
+                        if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
+                            throw new FullMarksException("Event dates cannot be empty.");
+                        }
+                        tasks.addTask(new Event(input, startDate, endDate));
+                        ui.showMessage("New Event: " + input);
+                    } else {
+                        throw new FullMarksException("Invalid task type."
+                                + " Please type 'todo', 'deadline' or 'event'.");
+                    }
+                    storage.saveTasks(tasks);
+                    break;
                 }
             } catch (FullMarksException e) {
                 ui.showMessage(e.getMessage());

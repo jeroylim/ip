@@ -1,4 +1,4 @@
-package fullMarksBot;
+package fullmarksbot;
 
 /**
  * Parses user input into commands and arguments for FullMarksBot.

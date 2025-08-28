@@ -1,6 +1,12 @@
-package fullMarksBot;
+package fullmarksbot;
 
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Handles saving and loading tasks to and from persistent storage.
@@ -43,7 +49,9 @@ public class Storage {
     public TaskList loadTasks() {
         TaskList taskList = new TaskList();
         File file = new File(filePath);
-        if (!file.exists()) return taskList;
+        if (!file.exists()) {
+            return taskList;
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
