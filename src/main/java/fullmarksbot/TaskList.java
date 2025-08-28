@@ -1,4 +1,4 @@
-package fullMarksBot;
+package fullmarksbot;
 
 import java.util.ArrayList;
 
@@ -38,7 +38,8 @@ public class TaskList {
      */
     public void markTask(int index) throws FullMarksBot.FullMarksException {
         if (index < 0 || index >= tasks.size()) {
-            throw new FullMarksBot.FullMarksException("Task number " + (index + 1) + " does not exist.");
+            throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
+                    + " does not exist.");
         }
         tasks.get(index).markDone();
     }
@@ -51,7 +52,8 @@ public class TaskList {
      */
     public void unmarkTask(int index) throws FullMarksBot.FullMarksException {
         if (index < 0 || index >= tasks.size()) {
-            throw new FullMarksBot.FullMarksException("Task number " + (index + 1) + " does not exist.");
+            throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
+                    + " does not exist.");
         }
         tasks.get(index).markUndone();
     }

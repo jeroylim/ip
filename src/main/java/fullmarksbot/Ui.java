@@ -1,4 +1,4 @@
-package fullMarksBot;
+package fullmarksbot;
 
 import java.util.Scanner;
 
@@ -9,7 +9,7 @@ public class Ui {
     private final Scanner scanner;
 
     /**
-     * Constructs a Ui object for user interaction.
+     * Constructs an Ui object for user interaction.
      */
     public Ui() {
         this.scanner = new Scanner(System.in);
@@ -21,7 +21,8 @@ public class Ui {
      * @param NAME Name of the bot.
      */
     public void showWelcome(String NAME) {
-        System.out.printf("Hello, I'm %s, the bot that gives you full marks, please write down what you want me to store!%n", NAME);
+        System.out.printf("Hello, I'm %s, the bot that gives you full marks,"
+                + " please write down what you want me to store!%n", NAME);
     }
 
     /**
@@ -41,7 +42,8 @@ public class Ui {
     public void showTaskList(TaskList taskList) {
         for (int i = 0; i < taskList.size(); i++) {
             FullMarksBot.Task t = taskList.getTask(i);
-            System.out.println((i + 1) + ": " + t.getStatusIcon() + t.getDescription());
+            System.out.println((i + 1) + ": " + t.getStatusIcon()
+                    + t.getDescription());
         }
     }
 
