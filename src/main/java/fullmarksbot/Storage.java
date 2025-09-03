@@ -32,7 +32,7 @@ public class Storage {
         file.getParentFile().mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (FullMarksBot.Task task : taskList.getTasks()) {
-                writer.write(task.writtenTasks());
+                writer.write(task.writeTasks());
                 writer.newLine();
             }
         } catch (IOException e) {
@@ -57,7 +57,7 @@ public class Storage {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" \\| ");
                 String type = parts[0];
-                boolean done = parts[1].equals("1");
+                boolean isDone = parts[1].equals("1");
                 FullMarksBot.Task task = null;
                 switch (type) {
                 case "T":
@@ -70,14 +70,14 @@ public class Storage {
                     task = new FullMarksBot.Event(parts[2], parts[3], parts[4]);
                     break;
                 }
-                if (task != null && done) {
+                if (task != null && isDone) {
                     task.markDone();
                 }
                 if (task != null) {
                     taskList.addTask(task);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.out.println("Error loading tasks: " + e.getMessage());
         }
         return taskList;

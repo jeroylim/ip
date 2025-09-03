@@ -47,6 +47,16 @@ public class Ui {
         }
     }
 
+    // Helper for GUI: get task list string
+    public String getTaskListString(TaskList taskList) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < taskList.size(); i++) {
+            FullMarksBot.Task t = taskList.getTask(i);
+            sb.append((i + 1)).append(": ").append(t.getStatusIcon()).append(t.getDescription()).append("\n");
+        }
+        return sb.length() == 0 ? "No tasks yet!" : sb.toString().trim();
+    }
+
     /**
      * Displays a message to the user.
      *
@@ -78,5 +88,16 @@ public class Ui {
             FullMarksBot.Task t = foundTasks.get(i);
             System.out.println("     " + (i + 1) + "." + t.getStatusIcon() + t.getDescription());
         }
+    }
+
+    // Helper for GUI: get found tasks string
+    public String getFoundTasksString(java.util.List<FullMarksBot.Task> foundTasks) {
+        if (foundTasks.isEmpty()) return "No matching tasks found.";
+        StringBuilder sb = new StringBuilder("Here are the related tasks:\n");
+        for (int i = 0; i < foundTasks.size(); i++) {
+            FullMarksBot.Task t = foundTasks.get(i);
+            sb.append("     ").append(i + 1).append(".").append(t.getStatusIcon()).append(t.getDescription()).append("\n");
+        }
+        return sb.toString().trim();
     }
 }
