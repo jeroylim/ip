@@ -49,7 +49,7 @@ public class FullMarksBot {
          *
          * @return Written format of the task.
          */
-        public abstract String writtenTasks();
+        public abstract String writeTasks();
 
     }
 
@@ -72,7 +72,7 @@ public class FullMarksBot {
         }
 
         @Override
-        public String writtenTasks() {
+        public String writeTasks() {
             return "T | " + (isDone ? "1" : "0") + " | " + description;
         }
 
@@ -90,11 +90,14 @@ public class FullMarksBot {
          * @param description Description of the deadline.
          * @param endDate End date in string format.
          */
-        public Deadline(String description, String endDate) {
-            super(description);
-            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            this.endDate = LocalDateTime.parse(endDate, inputFormat1);
-
+        public Deadline(String description, String endDate) throws FullMarksException {
+                super(description);
+                try {
+                    DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                    this.endDate = LocalDateTime.parse(endDate, inputFormat);
+                } catch (Exception e) {
+                    throw new FullMarksException("Invalid date format. Please use yyyy-MM-ddTHH:mm");
+                }
         }
 
         @Override
@@ -109,7 +112,7 @@ public class FullMarksBot {
         }
 
         @Override
-        public String writtenTasks() {
+        public String writeTasks() {
             return "D | " + (isDone ? "1" : "0") + " | " + description + " | " + endDate;
         }
 
@@ -129,11 +132,15 @@ public class FullMarksBot {
          * @param startDate Start date in string format.
          * @param endDate End date in string format.
          */
-        public Event(String description, String startDate, String endDate) {
+        public Event(String description, String startDate, String endDate) throws FullMarksException {
             super(description);
-            DateTimeFormatter inputFormat1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            this.startDate = LocalDateTime.parse(startDate, inputFormat1);
-            this.endDate = LocalDateTime.parse(endDate, inputFormat1);
+            try {
+                DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                this.startDate = LocalDateTime.parse(startDate, inputFormat);
+                this.endDate = LocalDateTime.parse(endDate, inputFormat);
+            } catch (Exception e) {
+                throw new FullMarksException("Invalid date format. Please use yyyy-MM-ddTHH:mm");
+            }
         }
 
         @Override
@@ -149,7 +156,7 @@ public class FullMarksBot {
         }
 
         @Override
-        public String writtenTasks() {
+        public String writeTasks() {
             return "E | " + (isDone ? "1" : "0") + " | "
                     + description + " | " + startDate + " | " + endDate;
         }
@@ -188,7 +195,7 @@ public class FullMarksBot {
      * @param args Command-line arguments.
      */
     public static void main(String[] args) {
-        Ui ui = new Ui();
+        /*Ui ui = new Ui();
         Storage storage = new Storage(FILE_PATH);
         TaskList tasks = storage.loadTasks();
 
@@ -234,7 +241,7 @@ public class FullMarksBot {
                         ui.showMessage("New Todo: " + input);
                     } else if (containsExactWord(type, "deadline")) {
                         String endDate = ui.ask("When should it be done by?"
-                                + " Please format it like yyyy-MM-dd HH:mm");
+                                + " Please format it like yyyy-MM-ddTHH:mm");
                         if (endDate.trim().isEmpty()) {
                             throw new FullMarksException("Deadline date cannot be empty.");
                         }
@@ -242,9 +249,9 @@ public class FullMarksBot {
                         ui.showMessage("New Deadline: " + input);
                     } else if (containsExactWord(type, "event")) {
                         String startDate = ui.ask("When does this event start?"
-                                + " Please format it like yyyy-MM-dd HH:mm");
+                                + " Please format it like yyyy-MM-ddTHH:mm");
                         String endDate = ui.ask("Now when does it end?"
-                                + " Please format it like yyyy-MM-dd HH:mm");
+                                + " Please format it like yyyy-MM-ddTHH:mm");
                         if (startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
                             throw new FullMarksException("Event dates cannot be empty.");
                         }
@@ -262,6 +269,144 @@ public class FullMarksBot {
             } catch (Exception e) {
                 ui.showMessage("Generic error: " + e.getMessage());
             }
+        } */
+    }
+
+    private final Storage storage;
+    private final TaskList tasks;
+    private final Ui ui = new Ui();
+
+    public FullMarksBot() {
+        this.storage = new Storage(FILE_PATH);
+        this.tasks = storage.loadTasks();
+    }
+
+    private enum State {
+        NORMAL,
+        WAITING_TASKTYPE,
+        WAITING_DEADLINE,
+        WAITING_EVENT_START,
+        WAITING_EVENT_END
+    }
+
+    private State state = State.NORMAL;
+    private String pendingDescription;
+    private String pendingStartDate;
+
+    /**
+     * Unified entry point for GUI.
+     */
+    public String getResponse(String input) throws FullMarksException {
+        switch (state) {
+            case NORMAL:
+                return handleNormal(input);
+            case WAITING_TASKTYPE:
+                return handleTaskType(input);
+            case WAITING_DEADLINE:
+                return handleDeadline(input);
+            case WAITING_EVENT_START:
+                return handleEventStart(input);
+            case WAITING_EVENT_END:
+                return handleEventEnd(input);
+            default:
+                throw new FullMarksException("What?... Please try again.");
+            }
+    }
+
+    private String handleNormal(String input) throws FullMarksException {
+        String command = Parser.getCommandWord(input);
+        switch (command) {
+        case "list":
+            return ui.getTaskListString(tasks);
+
+        case "mark":
+            int markIdx = Parser.getTaskNumber(input);
+            tasks.markTask(markIdx);
+            storage.saveTasks(tasks);
+            return "Congrats! You completed this task!";
+
+        case "unmark":
+            int unmarkIdx = Parser.getTaskNumber(input);
+            tasks.unmarkTask(unmarkIdx);
+            storage.saveTasks(tasks);
+            return "Oh no! Let me unmark this...";
+
+        case "delete":
+            int delIdx = Parser.getTaskNumber(input);
+            tasks.deleteTask(delIdx);
+            storage.saveTasks(tasks);
+            return "Let's get this task out of here.";
+
+        case "find":
+            String keyword = Parser.getFindKeyword(input);
+            return ui.getFoundTasksString(tasks.findTasks(keyword));
+
+        case "bye":
+            return "bye bye for now!";
+
+        default:
+            pendingDescription = input.trim();
+            state = State.WAITING_TASKTYPE;
+            return "Is this a Todo, Deadline or Event task?";
         }
     }
+
+    private String handleTaskType(String type) throws FullMarksException {
+        if (containsExactWord(type, "todo")) {
+            tasks.addTask(new Todo(pendingDescription));
+            storage.saveTasks(tasks);
+            String toReturn = "New Todo: " + pendingDescription;
+            resetState();
+            return toReturn;
+
+        } else if (containsExactWord(type, "deadline")) {
+            state = State.WAITING_DEADLINE;
+            return "When should it be done by? (yyyy-MM-ddTHH:mm)";
+
+        } else if (containsExactWord(type, "event")) {
+            state = State.WAITING_EVENT_START;
+            return "When does this event start? (yyyy-MM-ddTHH:mm)";
+        } else {
+            resetState();
+            throw new FullMarksException("Invalid type. Please type 'todo', 'deadline' or 'event'.");
+        }
+    }
+
+    private String handleDeadline(String endDate) throws FullMarksException {
+        if (endDate.trim().isEmpty()) {
+            throw new FullMarksException("Deadline date cannot be empty.");
+        }
+        tasks.addTask(new Deadline(pendingDescription, endDate));
+        storage.saveTasks(tasks);
+        String toReturn = "New Deadline: " + pendingDescription;
+        resetState();
+        return toReturn;
+    }
+
+    private String handleEventStart(String startDate) throws FullMarksException {
+        if (startDate.trim().isEmpty()) {
+            throw new FullMarksException("Start date cannot be empty.");
+        }
+        pendingStartDate = startDate;
+        state = State.WAITING_EVENT_END;
+        return "Okay, now give me the end date (yyyy-MM-ddTHH:mm)";
+    }
+
+    private String handleEventEnd(String endDate) throws FullMarksException {
+        if (endDate.trim().isEmpty()) {
+            throw new FullMarksException("End date cannot be empty.");
+        }
+        tasks.addTask(new Event(pendingDescription, pendingStartDate, endDate));
+        storage.saveTasks(tasks);
+        String toReturn = "New Event: " + pendingDescription;
+        resetState();
+        return toReturn;
+    }
+
+    private void resetState() {
+        state = State.NORMAL;
+        pendingDescription = null;
+        pendingStartDate = null;
+    }
+
 }
