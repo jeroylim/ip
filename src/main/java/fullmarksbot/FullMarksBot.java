@@ -13,7 +13,6 @@ public class FullMarksBot {
 
 
 
-
     /**
      * Runs the main loop of FullMarksBot.
      *
@@ -55,6 +54,7 @@ public class FullMarksBot {
      * @throws FullMarksException If an error occurs during processing.
      */
     public String getResponse(String input) throws FullMarksException {
+        assert input != null : "Input to getResponse should not be null";
         switch (state) {
         case NORMAL:
             return handleNormal(input);
@@ -74,9 +74,11 @@ public class FullMarksBot {
         default:
             throw new FullMarksException("What?... Please try again.");
             }
+
     }
 
     private String handleNormal(String input) throws FullMarksException {
+        assert input != null : "Input to handleNormal should not be null";
         String command = Parser.getCommandWord(input);
         switch (command) {
         case "list":
@@ -115,6 +117,8 @@ public class FullMarksBot {
     }
 
     private String handleTaskType(String type) throws FullMarksException {
+
+        assert type != null : "Type in handleTaskType should not be null";
         if (parser.containsExactWord(type, "todo")) {
             tasks.addTask(new Todo(pendingDescription));
             storage.saveTasks(tasks);

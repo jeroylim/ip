@@ -13,7 +13,9 @@ public class Parser {
      * @return Command word in lowercase.
      */
     public static String getCommandWord(String input) {
+        assert input != null : "Input to getCommandWord should not be null";
         String[] parts = input.trim().split(" ");
+        assert parts.length > 0 : "Input should contain at least one word";
         return parts[0].toLowerCase();
     }
 
@@ -30,7 +32,9 @@ public class Parser {
             throw new FullMarksException("Please specify a task number.");
         }
         try {
-            return Integer.parseInt(parts[1]) - 1;
+            int idx = Integer.parseInt(parts[1]) - 1;
+            assert idx >= 0 : "Task number should be positive";
+            return idx;
         } catch (NumberFormatException e) {
             throw new FullMarksException("Invalid task number. Please enter a number.");
         }
@@ -43,7 +47,10 @@ public class Parser {
      * @return Keyword to search for.
      * @throws FullMarksException If the keyword is missing.
      */
+
     public static String getFindKeyword(String input) throws FullMarksException {
+    assert input != null : "Input to getFindKeyword should not be null";
+
         String[] parts = input.trim().split(" ", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
             throw new FullMarksException("Please specify a keyword to find.");

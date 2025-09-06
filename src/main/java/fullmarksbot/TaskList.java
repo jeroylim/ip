@@ -13,7 +13,9 @@ public class TaskList {
      *
      * @param task Task to be added.
      */
+<
     public void addTask(Task task) {
+        assert task != null : "Task added to TaskList should not be null";
         tasks.add(task);
     }
 
@@ -23,7 +25,9 @@ public class TaskList {
      * @param index Index of the task to delete.
      * @throws FullMarksException If the index is out of bounds.
      */
+
     public void deleteTask(int index) throws FullMarksException {
+        assert index >= 0 && index < tasks.size() : "Index for deleteTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1) + " does not exist.");
         }
@@ -37,6 +41,8 @@ public class TaskList {
      * @throws FullMarksException If the index is out of bounds.
      */
     public void markTask(int index) throws FullMarksException {
+          assert index >= 0 && index < tasks.size() : "Index for markTask should be valid";
+ 
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -51,6 +57,7 @@ public class TaskList {
      * @throws FullMarksException If the index is out of bounds.
      */
     public void unmarkTask(int index) throws FullMarksException {
+        assert index >= 0 && index < tasks.size() : "Index for unmarkTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -64,6 +71,7 @@ public class TaskList {
      * @param keyword Keyword to search for in task descriptions.
      * @return ArrayList of matching tasks.
      */
+
     public ArrayList<Task> findTasks(String keyword) {
         ArrayList<Task> matches = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
@@ -84,6 +92,7 @@ public class TaskList {
     }
 
     public Task getTask(int index) {
+        assert index >= 0 && index < tasks.size() : "Index for getTask should be valid";
         return tasks.get(index);
     }
 }

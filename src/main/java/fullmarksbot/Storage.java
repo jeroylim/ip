@@ -19,6 +19,7 @@ public class Storage {
      * @param filePath Path to the file for storing tasks.
      */
     public Storage(String filePath) {
+        assert filePath != null : "Storage filePath should not be null";
         this.filePath = filePath;
     }
 
@@ -28,10 +29,12 @@ public class Storage {
      * @param taskList List of tasks to save.
      */
     public void saveTasks(TaskList taskList) {
+        assert taskList != null : "TaskList to save should not be null";
         File file = new File(filePath);
         file.getParentFile().mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             for (Task task : taskList.getTasks()) {
+                assert task != null : "Task in saveTasks should not be null";
                 writer.write(task.writeTasks());
                 writer.newLine();
             }
@@ -56,6 +59,7 @@ public class Storage {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" \\| ");
+                assert parts.length >= 3 : "Saved task line should have at least 3 parts";
                 String type = parts[0];
                 boolean isDone = parts[1].equals("1");
                 Task task = null;
@@ -64,10 +68,13 @@ public class Storage {
                     task = new Todo(parts[2]);
                     break;
                 case "D":
+                    assert parts.length >= 4 : "Deadline line should have 4 parts";
                     task = new Deadline(parts[2], parts[3]);
                     break;
                 case "E":
+                    assert parts.length >= 5 : "Event line should have 5 parts";
                     task = new Event(parts[2], parts[3], parts[4]);
+
                     break;
                 }
                 if (task != null && isDone) {
