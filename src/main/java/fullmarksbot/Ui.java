@@ -21,6 +21,7 @@ public class Ui {
      * @param NAME Name of the bot.
      */
     public void showWelcome(String NAME) {
+        assert NAME != null : "Bot name should not be null";
         System.out.printf("Hello, I'm %s, the bot that gives you full marks,"
                 + " please write down what you want me to store!%n", NAME);
     }
