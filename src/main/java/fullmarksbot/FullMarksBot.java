@@ -24,6 +24,7 @@ public class FullMarksBot {
          * @param description Description of the task.
          */
         public Task(String description) {
+            assert description != null : "Task description should not be null";
             this.description = description;
             this.isDone = false;
         }
@@ -64,6 +65,7 @@ public class FullMarksBot {
          */
         public Todo(String description) {
             super(description);
+            assert description != null : "Todo description should not be null";
         }
 
         @Override
@@ -91,13 +93,15 @@ public class FullMarksBot {
          * @param endDate End date in string format.
          */
         public Deadline(String description, String endDate) throws FullMarksException {
-                super(description);
-                try {
-                    DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-                    this.endDate = LocalDateTime.parse(endDate, inputFormat);
-                } catch (Exception e) {
-                    throw new FullMarksException("Invalid date format. Please use yyyy-MM-ddTHH:mm");
-                }
+            super(description);
+            assert description != null : "Deadline description should not be null";
+            assert endDate != null : "Deadline endDate should not be null";
+            try {
+                DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                this.endDate = LocalDateTime.parse(endDate, inputFormat);
+            } catch (Exception e) {
+                throw new FullMarksException("Invalid date format. Please use yyyy-MM-ddTHH:mm");
+            }
         }
 
         @Override
@@ -134,6 +138,9 @@ public class FullMarksBot {
          */
         public Event(String description, String startDate, String endDate) throws FullMarksException {
             super(description);
+            assert description != null : "Event description should not be null";
+            assert startDate != null : "Event startDate should not be null";
+            assert endDate != null : "Event endDate should not be null";
             try {
                 DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
                 this.startDate = LocalDateTime.parse(startDate, inputFormat);
@@ -297,6 +304,7 @@ public class FullMarksBot {
      * Unified entry point for GUI.
      */
     public String getResponse(String input) throws FullMarksException {
+        assert input != null : "Input to getResponse should not be null";
         switch (state) {
             case NORMAL:
                 return handleNormal(input);
@@ -310,10 +318,11 @@ public class FullMarksBot {
                 return handleEventEnd(input);
             default:
                 throw new FullMarksException("What?... Please try again.");
-            }
+        }
     }
 
     private String handleNormal(String input) throws FullMarksException {
+        assert input != null : "Input to handleNormal should not be null";
         String command = Parser.getCommandWord(input);
         switch (command) {
         case "list":
@@ -352,6 +361,7 @@ public class FullMarksBot {
     }
 
     private String handleTaskType(String type) throws FullMarksException {
+        assert type != null : "Type in handleTaskType should not be null";
         if (containsExactWord(type, "todo")) {
             tasks.addTask(new Todo(pendingDescription));
             storage.saveTasks(tasks);

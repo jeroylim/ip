@@ -14,6 +14,7 @@ public class TaskList {
      * @param task Task to be added.
      */
     public void addTask(FullMarksBot.Task task) {
+        assert task != null : "Task added to TaskList should not be null";
         tasks.add(task);
     }
 
@@ -24,6 +25,7 @@ public class TaskList {
      * @throws FullMarksBot.FullMarksException If the index is out of bounds.
      */
     public void deleteTask(int index) throws FullMarksBot.FullMarksException {
+        assert index >= 0 && index < tasks.size() : "Index for deleteTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksBot.FullMarksException("Task number " + (index + 1) + " does not exist.");
         }
@@ -37,6 +39,7 @@ public class TaskList {
      * @throws FullMarksBot.FullMarksException If the index is out of bounds.
      */
     public void markTask(int index) throws FullMarksBot.FullMarksException {
+        assert index >= 0 && index < tasks.size() : "Index for markTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -51,6 +54,7 @@ public class TaskList {
      * @throws FullMarksBot.FullMarksException If the index is out of bounds.
      */
     public void unmarkTask(int index) throws FullMarksBot.FullMarksException {
+        assert index >= 0 && index < tasks.size() : "Index for unmarkTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -65,9 +69,11 @@ public class TaskList {
      * @return ArrayList of matching tasks.
      */
     public ArrayList<FullMarksBot.Task> findTasks(String keyword) {
+        assert keyword != null : "Keyword for findTasks should not be null";
         ArrayList<FullMarksBot.Task> matches = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
         for (FullMarksBot.Task task : tasks) {
+            assert task != null : "Task in TaskList should not be null";
             if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
                 matches.add(task);
             }
@@ -84,6 +90,7 @@ public class TaskList {
     }
 
     public FullMarksBot.Task getTask(int index) {
+        assert index >= 0 && index < tasks.size() : "Index for getTask should be valid";
         return tasks.get(index);
     }
 }
