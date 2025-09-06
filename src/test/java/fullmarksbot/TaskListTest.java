@@ -23,7 +23,7 @@ class TaskListTest {
      */
     @Test
     void testAddTask() {
-        FullMarksBot.Task task = new FullMarksBot.Todo("Eat");
+        Task task = new Todo("Eat");
         taskList.addTask(task);
 
         assertEquals(1, taskList.size());
@@ -35,15 +35,15 @@ class TaskListTest {
      */
     @Test
     void testDeleteTask() {
-        FullMarksBot.Task task1 = new FullMarksBot.Todo("Write a lot");
-        FullMarksBot.Task task2 = new FullMarksBot.Todo("Submit assignment");
+        Task task1 = new Todo("Write a lot");
+        Task task2 = new Todo("Submit assignment");
 
         taskList.addTask(task1);
         taskList.addTask(task2);
 
         try {
             taskList.deleteTask(0);
-        } catch (FullMarksBot.FullMarksException e) {
+        } catch (FullMarksException e) {
             fail("Deleting a valid task should not throw an exception");
         }
 
@@ -53,7 +53,7 @@ class TaskListTest {
         try {
             taskList.deleteTask(5);
             fail("Expected FullMarksException was not thrown");
-        } catch (FullMarksBot.FullMarksException e) {
+        } catch (FullMarksException e) {
             assertEquals("Task number 6 does not exist.", e.getMessage());
         }
     }
