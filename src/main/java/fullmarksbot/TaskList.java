@@ -6,14 +6,15 @@ import java.util.ArrayList;
  * Manages a list of tasks and provides operations to modify and query the list.
  */
 public class TaskList {
-    private final ArrayList<FullMarksBot.Task> tasks = new ArrayList<>();
+    private final ArrayList<Task> tasks = new ArrayList<>();
 
     /**
      * Adds a task to the list.
      *
      * @param task Task to be added.
      */
-    public void addTask(FullMarksBot.Task task) {
+<
+    public void addTask(Task task) {
         assert task != null : "Task added to TaskList should not be null";
         tasks.add(task);
     }
@@ -22,12 +23,13 @@ public class TaskList {
      * Deletes the task at the specified index.
      *
      * @param index Index of the task to delete.
-     * @throws FullMarksBot.FullMarksException If the index is out of bounds.
+     * @throws FullMarksException If the index is out of bounds.
      */
-    public void deleteTask(int index) throws FullMarksBot.FullMarksException {
+
+    public void deleteTask(int index) throws FullMarksException {
         assert index >= 0 && index < tasks.size() : "Index for deleteTask should be valid";
         if (index < 0 || index >= tasks.size()) {
-            throw new FullMarksBot.FullMarksException("Task number " + (index + 1) + " does not exist.");
+            throw new FullMarksException("Task number " + (index + 1) + " does not exist.");
         }
         tasks.remove(index);
     }
@@ -36,12 +38,13 @@ public class TaskList {
      * Marks the task at the specified index as done.
      *
      * @param index Index of the task to mark as done.
-     * @throws FullMarksBot.FullMarksException If the index is out of bounds.
+     * @throws FullMarksException If the index is out of bounds.
      */
-    public void markTask(int index) throws FullMarksBot.FullMarksException {
-        assert index >= 0 && index < tasks.size() : "Index for markTask should be valid";
+    public void markTask(int index) throws FullMarksException {
+          assert index >= 0 && index < tasks.size() : "Index for markTask should be valid";
+ 
         if (index < 0 || index >= tasks.size()) {
-            throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
+            throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
         }
         tasks.get(index).markDone();
@@ -51,12 +54,12 @@ public class TaskList {
      * Marks the task at the specified index as not done.
      *
      * @param index Index of the task to unmark.
-     * @throws FullMarksBot.FullMarksException If the index is out of bounds.
+     * @throws FullMarksException If the index is out of bounds.
      */
-    public void unmarkTask(int index) throws FullMarksBot.FullMarksException {
+    public void unmarkTask(int index) throws FullMarksException {
         assert index >= 0 && index < tasks.size() : "Index for unmarkTask should be valid";
         if (index < 0 || index >= tasks.size()) {
-            throw new FullMarksBot.FullMarksException("Task number " + (index + 1)
+            throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
         }
         tasks.get(index).markUndone();
@@ -68,12 +71,11 @@ public class TaskList {
      * @param keyword Keyword to search for in task descriptions.
      * @return ArrayList of matching tasks.
      */
-    public ArrayList<FullMarksBot.Task> findTasks(String keyword) {
-        assert keyword != null : "Keyword for findTasks should not be null";
-        ArrayList<FullMarksBot.Task> matches = new ArrayList<>();
+
+    public ArrayList<Task> findTasks(String keyword) {
+        ArrayList<Task> matches = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
-        for (FullMarksBot.Task task : tasks) {
-            assert task != null : "Task in TaskList should not be null";
+        for (Task task : tasks) {
             if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
                 matches.add(task);
             }
@@ -81,7 +83,7 @@ public class TaskList {
         return matches;
     }
 
-    public ArrayList<FullMarksBot.Task> getTasks() {
+    public ArrayList<Task> getTasks() {
         return tasks;
     }
 
@@ -89,7 +91,7 @@ public class TaskList {
         return tasks.size();
     }
 
-    public FullMarksBot.Task getTask(int index) {
+    public Task getTask(int index) {
         assert index >= 0 && index < tasks.size() : "Index for getTask should be valid";
         return tasks.get(index);
     }

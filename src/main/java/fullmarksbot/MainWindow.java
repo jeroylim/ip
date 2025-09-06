@@ -39,6 +39,9 @@ public class MainWindow extends AnchorPane {
     private String pendingDescription;  // hold description across states
     private String pendingStartDate;    // hold start date for event
 
+    /**
+     * Initializes the main window and displays the greeting.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
@@ -49,11 +52,18 @@ public class MainWindow extends AnchorPane {
         dialogContainer.getChildren().add(DialogBox.getDukeDialog(greeting, dukeImage));
     }
 
-    /** Injects the FullMarksBot instance */
+    /**
+     * Injects the FullMarksBot instance for use in the GUI.
+     *
+     * @param d FullMarksBot instance.
+     */
     public void setFullMarksBot(FullMarksBot d) {
         fullMarksBot = d;
     }
 
+    /**
+     * Handles user input from the text field and updates the dialog container.
+     */
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
@@ -69,14 +79,12 @@ public class MainWindow extends AnchorPane {
                 javafx.application.Platform.exit();   // closes JavaFX
             }
 
-        } catch (FullMarksBot.FullMarksException e) {
-            // Show error message from your custom exception in the dialog
+        } catch (FullMarksException e) {
             dialogContainer.getChildren().addAll(
                     DialogBox.getUserDialog(input, userImage),
                     DialogBox.getDukeDialog(" Error: " + e.getMessage(), dukeImage)
             );
         } catch (Exception e) {
-            // Generic fallback (in case something unexpected happens)
             dialogContainer.getChildren().addAll(
                     DialogBox.getUserDialog(input, userImage),
                     DialogBox.getDukeDialog(" Oh no, " + e.getMessage(), dukeImage)
@@ -87,5 +95,3 @@ public class MainWindow extends AnchorPane {
     }
 
 }
-
-

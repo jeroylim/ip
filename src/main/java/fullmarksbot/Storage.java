@@ -33,7 +33,7 @@ public class Storage {
         File file = new File(filePath);
         file.getParentFile().mkdirs();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            for (FullMarksBot.Task task : taskList.getTasks()) {
+            for (Task task : taskList.getTasks()) {
                 assert task != null : "Task in saveTasks should not be null";
                 writer.write(task.writeTasks());
                 writer.newLine();
@@ -62,18 +62,19 @@ public class Storage {
                 assert parts.length >= 3 : "Saved task line should have at least 3 parts";
                 String type = parts[0];
                 boolean isDone = parts[1].equals("1");
-                FullMarksBot.Task task = null;
+                Task task = null;
                 switch (type) {
                 case "T":
-                    task = new FullMarksBot.Todo(parts[2]);
+                    task = new Todo(parts[2]);
                     break;
                 case "D":
                     assert parts.length >= 4 : "Deadline line should have 4 parts";
-                    task = new FullMarksBot.Deadline(parts[2], parts[3]);
+                    task = new Deadline(parts[2], parts[3]);
                     break;
                 case "E":
                     assert parts.length >= 5 : "Event line should have 5 parts";
-                    task = new FullMarksBot.Event(parts[2], parts[3], parts[4]);
+                    task = new Event(parts[2], parts[3], parts[4]);
+
                     break;
                 }
                 if (task != null && isDone) {

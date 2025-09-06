@@ -42,17 +42,22 @@ public class Ui {
      */
     public void showTaskList(TaskList taskList) {
         for (int i = 0; i < taskList.size(); i++) {
-            FullMarksBot.Task t = taskList.getTask(i);
+            Task t = taskList.getTask(i);
             System.out.println((i + 1) + ": " + t.getStatusIcon()
                     + t.getDescription());
         }
     }
 
-    // Helper for GUI: get task list string
+    /**
+     * Returns the task list as a formatted string for GUI display.
+     *
+     * @param taskList List of tasks.
+     * @return Formatted string of tasks.
+     */
     public String getTaskListString(TaskList taskList) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < taskList.size(); i++) {
-            FullMarksBot.Task t = taskList.getTask(i);
+            Task t = taskList.getTask(i);
             sb.append((i + 1)).append(": ").append(t.getStatusIcon()).append(t.getDescription()).append("\n");
         }
         return sb.length() == 0 ? "No tasks yet!" : sb.toString().trim();
@@ -83,20 +88,25 @@ public class Ui {
      *
      * @param foundTasks List of matching tasks.
      */
-    public void showFoundTasks(java.util.List<FullMarksBot.Task> foundTasks) {
+    public void showFoundTasks(java.util.List<Task> foundTasks) {
         System.out.println("Here are the related tasks:");
         for (int i = 0; i < foundTasks.size(); i++) {
-            FullMarksBot.Task t = foundTasks.get(i);
+            Task t = foundTasks.get(i);
             System.out.println("     " + (i + 1) + "." + t.getStatusIcon() + t.getDescription());
         }
     }
 
-    // Helper for GUI: get found tasks string
-    public String getFoundTasksString(java.util.List<FullMarksBot.Task> foundTasks) {
+    /**
+     * Returns the found tasks as a formatted string for GUI display.
+     *
+     * @param foundTasks List of matching tasks.
+     * @return Formatted string of found tasks.
+     */
+    public String getFoundTasksString(java.util.List<Task> foundTasks) {
         if (foundTasks.isEmpty()) return "No matching tasks found.";
         StringBuilder sb = new StringBuilder("Here are the related tasks:\n");
         for (int i = 0; i < foundTasks.size(); i++) {
-            FullMarksBot.Task t = foundTasks.get(i);
+            Task t = foundTasks.get(i);
             sb.append("     ").append(i + 1).append(".").append(t.getStatusIcon()).append(t.getDescription()).append("\n");
         }
         return sb.toString().trim();
