@@ -74,7 +74,6 @@ public class Storage {
                 case "E":
                     assert parts.length >= 5 : "Event line should have 5 parts";
                     task = new Event(parts[2], parts[3], parts[4]);
-
                     break;
                 }
                 if (task != null && isDone) {

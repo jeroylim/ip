@@ -13,7 +13,7 @@ public class TaskList {
      *
      * @param task Task to be added.
      */
-<
+
     public void addTask(Task task) {
         assert task != null : "Task added to TaskList should not be null";
         tasks.add(task);
@@ -27,7 +27,6 @@ public class TaskList {
      */
 
     public void deleteTask(int index) throws FullMarksException {
-        assert index >= 0 && index < tasks.size() : "Index for deleteTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1) + " does not exist.");
         }
@@ -41,8 +40,6 @@ public class TaskList {
      * @throws FullMarksException If the index is out of bounds.
      */
     public void markTask(int index) throws FullMarksException {
-          assert index >= 0 && index < tasks.size() : "Index for markTask should be valid";
- 
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -57,7 +54,6 @@ public class TaskList {
      * @throws FullMarksException If the index is out of bounds.
      */
     public void unmarkTask(int index) throws FullMarksException {
-        assert index >= 0 && index < tasks.size() : "Index for unmarkTask should be valid";
         if (index < 0 || index >= tasks.size()) {
             throw new FullMarksException("Task number " + (index + 1)
                     + " does not exist.");
@@ -72,12 +68,12 @@ public class TaskList {
      * @return ArrayList of matching tasks.
      */
 
-    public ArrayList<Task> findTasks(String keyword) {
-        ArrayList<Task> matches = new ArrayList<>();
+    public TaskList findTasks(String keyword) {
+        TaskList matches = new TaskList();
         String lowerKeyword = keyword.toLowerCase();
         for (Task task : tasks) {
             if (task.getDescription().toLowerCase().contains(lowerKeyword)) {
-                matches.add(task);
+                matches.addTask(task);
             }
         }
         return matches;
