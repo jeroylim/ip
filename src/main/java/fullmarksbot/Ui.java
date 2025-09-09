@@ -20,32 +20,10 @@ public class Ui {
      *
      * @param NAME Name of the bot.
      */
-    public void showWelcome(String NAME) {
+    public String showWelcomeString(String NAME) {
         assert NAME != null : "Bot name should not be null";
-        System.out.printf("Hello, I'm %s, the bot that gives you full marks,"
+        return String.format("Hello, I'm %s, the bot that gives you full marks,"
                 + " please write down what you want me to store!%n", NAME);
-    }
-
-    /**
-     * Reads the next command from the user.
-     *
-     * @return User input string.
-     */
-    public String readCommand() {
-        return scanner.nextLine();
-    }
-
-    /**
-     * Displays the list of tasks to the user.
-     *
-     * @param taskList List of tasks to display.
-     */
-    public void showTaskList(TaskList taskList) {
-        for (int i = 0; i < taskList.size(); i++) {
-            Task t = taskList.getTask(i);
-            System.out.println((i + 1) + ": " + t.getStatusIcon()
-                    + t.getDescription());
-        }
     }
 
     /**
@@ -64,49 +42,18 @@ public class Ui {
     }
 
     /**
-     * Displays a message to the user.
-     *
-     * @param msg Message to display.
-     */
-    public void showMessage(String msg) {
-        System.out.println(msg);
-    }
-
-    /**
-     * Prompts the user with a question and returns their response.
-     *
-     * @param prompt Prompt message.
-     * @return User's response.
-     */
-    public String ask(String prompt) {
-        System.out.println(prompt);
-        return scanner.nextLine();
-    }
-
-    /**
-     * Displays the list of tasks that match the search keyword.
-     *
-     * @param foundTasks List of matching tasks.
-     */
-    public void showFoundTasks(java.util.List<Task> foundTasks) {
-        System.out.println("Here are the related tasks:");
-        for (int i = 0; i < foundTasks.size(); i++) {
-            Task t = foundTasks.get(i);
-            System.out.println("     " + (i + 1) + "." + t.getStatusIcon() + t.getDescription());
-        }
-    }
-
-    /**
      * Returns the found tasks as a formatted string for GUI display.
      *
      * @param foundTasks List of matching tasks.
      * @return Formatted string of found tasks.
      */
-    public String getFoundTasksString(java.util.List<Task> foundTasks) {
-        if (foundTasks.isEmpty()) return "No matching tasks found.";
+    public String getFoundTasksString(TaskList foundTasks) {
+        if (foundTasks.size() == 0) {
+            return "No matching tasks found.";
+        }
         StringBuilder sb = new StringBuilder("Here are the related tasks:\n");
         for (int i = 0; i < foundTasks.size(); i++) {
-            Task t = foundTasks.get(i);
+            Task t = foundTasks.getTask(i);
             sb.append("     ").append(i + 1).append(".").append(t.getStatusIcon()).append(t.getDescription()).append("\n");
         }
         return sb.toString().trim();

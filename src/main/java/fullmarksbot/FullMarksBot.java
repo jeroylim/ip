@@ -9,8 +9,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class FullMarksBot {
     private static final String FILE_PATH = "./data/tasks.txt";
-
-
+    private static final String NAME = "FullMarksBot";
 
 
     /**
@@ -32,6 +31,10 @@ public class FullMarksBot {
     public FullMarksBot() {
         this.storage = new Storage(FILE_PATH);
         this.tasks = storage.loadTasks();
+    }
+
+    public String getName() {
+        return NAME;
     }
 
     private enum State {
@@ -111,6 +114,10 @@ public class FullMarksBot {
 
         default:
             pendingDescription = input.trim();
+            if (tasks.findTasks(pendingDescription).size() > 0) {
+                resetState();
+                throw new FullMarksException("This task already exists in your list.");
+            }
             state = State.WAITING_TASKTYPE;
             return "Is this a Todo, Deadline or Event task?";
         }

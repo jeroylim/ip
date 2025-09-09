@@ -26,18 +26,6 @@ public class MainWindow extends AnchorPane {
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/download.jpeg"));
     private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/100-emoji.png"));
 
-    // Conversation state
-    private enum State {
-        NORMAL,          // Just normal command input
-        WAITING_TASKTYPE,// User must specify todo/deadline/event
-        WAITING_DEADLINE,// User must enter deadline date
-        WAITING_EVENT_START,// User must enter event start
-        WAITING_EVENT_END   // User must enter event end
-    }
-
-    private State state = State.NORMAL;
-    private String pendingDescription;  // hold description across states
-    private String pendingStartDate;    // hold start date for event
 
     /**
      * Initializes the main window and displays the greeting.
@@ -46,8 +34,8 @@ public class MainWindow extends AnchorPane {
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
         Ui ui = new Ui();
-        String greeting = String.format("Hello, I'm %s, the bot that gives you full marks, "
-                + "please write down what you want me to store!", "FullMarksBot");
+        fullMarksBot = new FullMarksBot();
+        String greeting = ui.showWelcomeString(fullMarksBot.getName());
 
         dialogContainer.getChildren().add(DialogBox.getDukeDialog(greeting, dukeImage));
     }
